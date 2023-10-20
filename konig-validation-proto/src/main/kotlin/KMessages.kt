@@ -7,6 +7,7 @@ import com.konigsoftware.validation.kasts.Kast
 import com.konigsoftware.validation.kasts.StringKast
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.memberProperties
 
 class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
 
@@ -43,14 +44,16 @@ class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
     ): KMessageType? {
         val newMessage = kMessage.createInstance()
         newMessage.initialize(this, message)
-        return if (checkMessage(newMessage)) {
+        return if (checkMessage(newMessage, kMessage)) {
             newMessage
         } else {
             null
         }
     }
 
-    private fun checkMessage(newMessage: KMessage): Boolean {
-        return true
+    private fun <KMessageType : KMessage> checkMessage(message: KMessageType, kMessage: KClass<KMessageType>): Boolean {
+        return kMessage.memberProperties
+            .map { runCatching { it.get(message) }.isSuccess }
+            .all { it }
     }
 }

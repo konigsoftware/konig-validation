@@ -18,6 +18,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 
     implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
+    implementation(kotlin("reflect"))
+
 }
 
 tasks.create<Jar>("javadocJar") {

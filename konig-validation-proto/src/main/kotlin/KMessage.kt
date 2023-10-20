@@ -2,9 +2,10 @@ package com.konigsoftware.validation
 
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Message
+import com.konigsoftware.validation.kasts.KastResult
 import kotlin.reflect.KProperty
 
-open class KMessage {
+abstract class KMessage() {
 
     private lateinit var kMessages: KMessages
     private lateinit var message: Message
@@ -14,25 +15,7 @@ open class KMessage {
         this.message = message
     }
 
-    fun getKastIdForField(fieldDescriptor: FieldDescriptor): String {
-        return fieldDescriptor.options
-            .allFields
-            .entries
-            .singleOrNull { it.key.name == "KastId" }
-            ?.value as String?
-            ?: KMessages.getDefaultKastIdForType(fieldDescriptor.type)
-    }
-
-    fun getKastOptionsForField(fieldDescriptor: FieldDescriptor): List<String> {
-        return fieldDescriptor.options
-            .allFields
-            .entries
-            .singleOrNull { it.key.name == "KastOption" }
-            ?.value as List<String>?
-            ?: listOf()
-    }
-
-    fun getFieldValue(fieldDescriptor: FieldDescriptor): Any {
+    private fun getFieldValue(fieldDescriptor: FieldDescriptor): Any {
         return message.getField(fieldDescriptor)
     }
 
@@ -51,10 +34,29 @@ open class KMessage {
             val kastOptions = getKastOptionsForField(fieldDescriptor)
 
             val fieldValue = getFieldValue(fieldDescriptor)
-            val kastValue = kast(fieldValue, kastOptions)
 
-            return kastValue as Type
+            when (val kastResult = kast(fieldValue, kastOptions)) {
+                is KastResult.Success -> return kastResult.value as Type
+                is KastResult.Failure -> throw IllegalStateException("Trying to get property which is invalid")
+            }
         }
     }
+}
 
+private fun getKastIdForField(fieldDescriptor: FieldDescriptor): String {
+    return fieldDescriptor.options
+        .allFields
+        .entries
+        .singleOrNull { it.key.name == "KastId" }
+        ?.value as String?
+        ?: KMessages.getDefaultKastIdForType(fieldDescriptor.type)
+}
+
+private fun getKastOptionsForField(fieldDescriptor: FieldDescriptor): List<String> {
+    return fieldDescriptor.options
+        .allFields
+        .entries
+        .singleOrNull { it.key.name == "KastOption" }
+        ?.value as List<String>?
+        ?: listOf()
 }
