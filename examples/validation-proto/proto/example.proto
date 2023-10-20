@@ -1,7 +1,35 @@
 syntax = "proto3";
 
-message SearchRequest {
-  string query = 1;
-  int32 page_number = 2;
-  int32 results_per_page = 3;
+import "google/protobuf/descriptor.proto";
+
+package com.konigsoftware.validation.examples;
+
+// TODO: Move these into the library
+extend google.protobuf.FieldOptions {
+  // TODO: Use enums? something?
+  optional string KastId = 1000;
+  repeated string KastOption = 1001;
+}
+
+message Example {
+  string my_string = 1 [
+    (KastId) = "string",
+    (KastOption) = "disallow_empty",
+    (KastOption) = "max_length:20"
+  ];
+
+  string my_string_2 = 2 [
+    (KastOption) = "disallow_empty",
+    (KastOption) = "max_length:20"
+  ];
+
+  string my_string_3 = 3;
+
+  string my_string_4 = 4 [
+    (KastId) = "big_decimal"
+  ];
+
+  int32 my_int = 5 [
+    (KastId) = "int32"
+  ];
 }

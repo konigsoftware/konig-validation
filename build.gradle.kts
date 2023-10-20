@@ -61,8 +61,10 @@ subprojects {
         }
     }
 
-    extensions.getByType<SigningExtension>().sign(extensions.getByType<PublishingExtension>().publications.named("maven").get())
-    extensions.getByType<SigningExtension>().useInMemoryPgpKeys(System.getenv("GPG_PRIVATE_KEY"), System.getenv("GPG_PASSPHRASE"))
+    extensions.getByType<SigningExtension>()
+        .sign(extensions.getByType<PublishingExtension>().publications.named("maven").get())
+    extensions.getByType<SigningExtension>()
+        .useInMemoryPgpKeys(System.getenv("GPG_PRIVATE_KEY"), System.getenv("GPG_PASSPHRASE"))
 
     tasks.withType<Sign> {
         onlyIf { System.getenv("GPG_PRIVATE_KEY") != null }
@@ -70,6 +72,11 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
+
+        testLogging {
+            outputs.upToDateWhen { false }
+            showStandardStreams = true
+        }
     }
 }
 
