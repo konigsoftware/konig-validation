@@ -1,23 +1,44 @@
+import com.google.protobuf.gradle.id
+
 plugins {
     id("org.jetbrains.dokka") version "1.9.0"
+    id("com.google.protobuf") version "0.9.4"
 }
 
 java {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
-    implementation(project(":konig-validation-core"))
+    implementation(project(mapOf("path" to ":konig-validation-proto")))
+    project(":konig-validation-proto")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.10")
+    testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.12.7")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 
     implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
+    protobuf (files("proto/"))
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.1"
+    }
+
+    generateProtoTasks {
+        all().forEach {
+            // https://github.com/google/protobuf-gradle-plugin/issues/331#issuecomment-543333726
+            it.doFirst {
+                delete(it.outputs)
+            }
+            it.builtins {
+                id("kotlin")
+            }
+        }
+    }
 }
 
 tasks.create<Jar>("javadocJar") {

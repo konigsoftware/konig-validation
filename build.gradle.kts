@@ -67,6 +67,10 @@ subprojects {
     tasks.withType<Sign> {
         onlyIf { System.getenv("GPG_PRIVATE_KEY") != null }
     }
+
+    tasks.test {
+        useJUnitPlatform()
+    }
 }
 
 nexusPublishing {

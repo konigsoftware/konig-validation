@@ -8,6 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/examples" />
+            <option value="$PROJECT_DIR$/examples/validation-proto" />
             <option value="$PROJECT_DIR$/konig-validation-core" />
             <option value="$PROJECT_DIR$/konig-validation-json" />
             <option value="$PROJECT_DIR$/konig-validation-proto" />
