@@ -6,8 +6,7 @@ import com.konigsoftware.validation.kasts.Int32Kast
 import com.konigsoftware.validation.kasts.Kast
 import com.konigsoftware.validation.kasts.StringKast
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.*
 
 class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
 
@@ -39,10 +38,23 @@ class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
     internal fun getFieldKast(kastId: String): Kast<*, *> =
         kasts[kastId] ?: throw IllegalArgumentException("No field validator for")
 
-    fun <KMessageType : KMessage> kast(
-        message: Message, kMessage: KClass<KMessageType>
+    fun <MessageType : Message, KMessageType : KMessage> kast(
+        message: MessageType, kMessage: KClass<KMessageType>
     ): KMessageType? {
-        val newMessage = kMessage.createInstance()
+        var kVariantMessage: KClass<KMessageType>? = kMessage
+
+        val companionObject = kMessage.companionObject
+            ?.takeIf { it.isSubclassOf(KMessage.KTypeSelector::class) }
+
+        if (companionObject != null) {
+            kVariantMessage =
+                companionObject.memberFunctions.single { it.name == "getKTypeForMessage" /* TODO: Find a better way to identify this function */ }
+                    .call(kMessage.companionObjectInstance, message) as KClass<KMessageType>
+        }
+
+        if (kVariantMessage == null) return null
+
+        val newMessage = kVariantMessage.createInstance()
         newMessage.initialize(this, message)
         return if (checkMessage(newMessage, kMessage)) {
             newMessage

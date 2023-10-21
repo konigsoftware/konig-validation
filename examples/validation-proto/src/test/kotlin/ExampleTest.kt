@@ -34,6 +34,16 @@ class ExampleTest {
 
         assertNull(kInvalidExample)
 
+        val validExample2 = example {
+            myString2 = "a very advanced string value"
+            myInt = 456
+        }
+
+        val kExample2 =
+            KMessages.defaultKast(validExample2, KExampleAdvanced::class)
+
+        assertNotNull(kExample2)
+
         val kMessagesCustom = KMessages(mapOf(/* custom kasts go here */))
 
         val kExampleCustomKasts =

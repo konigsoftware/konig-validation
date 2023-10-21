@@ -3,9 +3,14 @@ package com.konigsoftware.validation
 import com.google.protobuf.Descriptors.FieldDescriptor
 import com.google.protobuf.Message
 import com.konigsoftware.validation.kasts.KastResult
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 abstract class KMessage() {
+
+    interface KTypeSelector<MessageType : Message> {
+        fun getKTypeForMessage(message: MessageType): KClass<*>?
+    }
 
     private lateinit var kMessages: KMessages
     private lateinit var message: Message
