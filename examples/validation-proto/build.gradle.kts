@@ -13,14 +13,15 @@ java {
 
 dependencies {
     implementation(project(mapOf("path" to ":konig-validation-proto")))
-    project(":konig-validation-proto")
+    implementation(project(":konig-validation-core"))
+    implementation(project(":konig-validation-proto"))
 
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.12.7")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 
     implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
-    protobuf (files("proto/"))
+    protobuf(files("proto/"))
 }
 
 protobuf {

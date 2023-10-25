@@ -1,6 +1,6 @@
 package com.konigsoftware.validation.proto.example
 
-import com.konigsoftware.validation.KMessages
+import com.konigsoftware.validation.KProtoMessages
 import com.konigsoftware.validation.examples.example
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
@@ -17,8 +17,7 @@ class ExampleTest {
             myInt = 456
         }
 
-        val kExample =
-            KMessages.defaultKast(validExample, KExample::class)
+        val kExample: KExample? = KProtoMessages.fromProtoDefault(validExample)
 
         assertNotNull(kExample)
 
@@ -30,7 +29,7 @@ class ExampleTest {
             myInt = 456
         }
 
-        val kInvalidExample = KMessages.defaultKast(invalidExample, KExample::class)
+        val kInvalidExample = KProtoMessages.fromProtoDefault<KExample>(invalidExample)
 
         assertNull(kInvalidExample)
 
@@ -40,14 +39,14 @@ class ExampleTest {
         }
 
         val kExample2 =
-            KMessages.defaultKast(validExample2, KExampleAdvanced::class)
+            KProtoMessages.fromProtoDefault(validExample2, KExampleAdvanced::class)
 
         assertNotNull(kExample2)
 
-        val kMessagesCustom = KMessages(mapOf(/* custom kasts go here */))
+        val kMessagesCustom = KProtoMessages(mapOf(/* custom kasts go here */))
 
         val kExampleCustomKasts =
-            kMessagesCustom.kast(validExample, KExample::class)
+            kMessagesCustom.fromProto(validExample, KExample::class)
 
         assertNotNull(kExampleCustomKasts)
 

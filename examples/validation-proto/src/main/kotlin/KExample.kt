@@ -1,17 +1,17 @@
 package com.konigsoftware.validation.proto.example
 
-import com.konigsoftware.validation.KMessage
+import com.konigsoftware.validation.KProtoMessage
 import com.konigsoftware.validation.examples.ExampleOuterClass.Example
 import kotlin.reflect.KClass
 
-class KExample : KMessage() {
+class KExample : KProtoMessage() {
     val my_string: String by Default()
     val my_int: Int by Default()
 }
 
-sealed class KExampleAdvanced : KMessage() {
+sealed class KExampleAdvanced : KProtoMessage() {
 
-    companion object : KTypeSelector<Example> {
+    companion object : KProtoMessage.KTypeSelector<Example> {
         override fun getKTypeForMessage(message: Example): KClass<*>? {
             return if (message.myString2.isNotEmpty()) {
                 KExampleSubType1::class

@@ -8,7 +8,7 @@ import com.konigsoftware.validation.kasts.StringKast
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
 
-class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
+class KProtoMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
 
     companion object {
         private val defaultKastIdForType = mapOf(
@@ -25,11 +25,15 @@ class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
                 "int32" to Int32Kast,
             )
 
-        private val defaultInstance = KMessages()
+        private val defaultInstance = KProtoMessages()
 
-        fun <KMessageType : KMessage> defaultKast(
+        fun <KMessageType : KProtoMessage> fromProtoDefault(
             message: Message, kMessage: KClass<KMessageType>
-        ): KMessageType? = defaultInstance.kast(message, kMessage)
+        ): KMessageType? = defaultInstance.fromProto(message, kMessage)
+
+        inline fun <reified KMessageType : KProtoMessage> fromProtoDefault(
+            message: Message
+        ): KMessageType? = fromProtoDefault(message, KMessageType::class)
     }
 
     // TODO: Check for overlap first
@@ -38,13 +42,13 @@ class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
     internal fun getFieldKast(kastId: String): Kast<*, *> =
         kasts[kastId] ?: throw IllegalArgumentException("No field validator for")
 
-    fun <MessageType : Message, KMessageType : KMessage> kast(
+    fun <MessageType : Message, KMessageType : KProtoMessage> fromProto(
         message: MessageType, kMessage: KClass<KMessageType>
     ): KMessageType? {
         var kVariantMessage: KClass<KMessageType>? = kMessage
 
         val companionObject = kMessage.companionObject
-            ?.takeIf { it.isSubclassOf(KMessage.KTypeSelector::class) }
+            ?.takeIf { it.isSubclassOf(KProtoMessage.KTypeSelector::class) }
 
         if (companionObject != null) {
             kVariantMessage =
@@ -62,6 +66,9 @@ class KMessages(userKasts: Map<String, Kast<*, *>> = mapOf()) {
             null
         }
     }
+
+    inline fun <reified KMessageType : KProtoMessage, MessageType : Message> fromProto(message: MessageType) =
+        fromProto(message, KMessageType::class)
 
     private fun <KMessageType : KMessage> checkMessage(message: KMessageType, kMessage: KClass<KMessageType>): Boolean {
         return kMessage.memberProperties

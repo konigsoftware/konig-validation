@@ -6,16 +6,16 @@ import com.konigsoftware.validation.kasts.KastResult
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-abstract class KMessage() {
+abstract class KProtoMessage() : KMessage {
 
     interface KTypeSelector<MessageType : Message> {
         fun getKTypeForMessage(message: MessageType): KClass<*>?
     }
 
-    private lateinit var kMessages: KMessages
+    private lateinit var kMessages: KProtoMessages
     private lateinit var message: Message
 
-    internal fun initialize(kMessages: KMessages, message: Message) {
+    internal fun initialize(kMessages: KProtoMessages, message: Message) {
         this.kMessages = kMessages
         this.message = message
     }
@@ -54,7 +54,7 @@ private fun getKastIdForField(fieldDescriptor: FieldDescriptor): String {
         .entries
         .singleOrNull { it.key.name == "KastId" }
         ?.value as String?
-        ?: KMessages.getDefaultKastIdForType(fieldDescriptor.type)
+        ?: KProtoMessages.getDefaultKastIdForType(fieldDescriptor.type)
 }
 
 private fun getKastOptionsForField(fieldDescriptor: FieldDescriptor): List<String> {
