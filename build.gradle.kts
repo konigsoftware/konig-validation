@@ -1,8 +1,9 @@
 group = "com.konigsoftware"
-version = "1.0.0" // CURRENT KONIG VALIATION VERSION
+version = "1.0.0" // CURRENT KONIG VALIDATION VERSION
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.21"
+    id("org.jetbrains.dokka") version "1.9.0"
     id("com.adarshr.test-logger") version "3.2.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     `maven-publish`
@@ -20,10 +21,35 @@ subprojects {
         plugin("java")
         plugin("maven-publish")
         plugin("signing")
+        plugin("org.jetbrains.dokka")
     }
 
     repositories {
         mavenCentral()
+    }
+
+    dependencies {
+        implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+
+        testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.21")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+        testImplementation("io.mockk:mockk:1.12.7")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+
+        testLogging {
+            outputs.upToDateWhen { false }
+            showStandardStreams = true
+        }
+    }
+
+    tasks.create<Jar>("javadocJar") {
+        archiveClassifier.set("javadoc")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        includeEmptyDirs = false
+        from(tasks.named("dokkaHtml"))
     }
 
     extensions.getByType<PublishingExtension>().publications {
