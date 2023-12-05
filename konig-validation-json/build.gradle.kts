@@ -7,7 +7,7 @@ java {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
     implementation(project(":konig-validation-core"))
 
     testImplementation(kotlin("test"))

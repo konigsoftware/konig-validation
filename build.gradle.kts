@@ -2,7 +2,7 @@ group = "com.konigsoftware"
 version = "1.0.0" // CURRENT KONIG VALIATION VERSION
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.21"
+    id("org.jetbrains.kotlin.jvm") version "1.9.21"
     id("com.adarshr.test-logger") version "3.2.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     `maven-publish`
@@ -61,8 +61,10 @@ subprojects {
         }
     }
 
-    extensions.getByType<SigningExtension>().sign(extensions.getByType<PublishingExtension>().publications.named("maven").get())
-    extensions.getByType<SigningExtension>().useInMemoryPgpKeys(System.getenv("GPG_PRIVATE_KEY"), System.getenv("GPG_PASSPHRASE"))
+    extensions.getByType<SigningExtension>()
+        .sign(extensions.getByType<PublishingExtension>().publications.named("maven").get())
+    extensions.getByType<SigningExtension>()
+        .useInMemoryPgpKeys(System.getenv("GPG_PRIVATE_KEY"), System.getenv("GPG_PASSPHRASE"))
 
     tasks.withType<Sign> {
         onlyIf { System.getenv("GPG_PRIVATE_KEY") != null }
