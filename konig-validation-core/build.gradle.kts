@@ -1,11 +1,20 @@
-repositories {
-    mavenCentral()
+dependencies {
+    implementation(kotlin("reflect"))
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "konig-validation-core"
 
-    testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.12.7")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+            from(components["java"])
+
+            artifact(tasks.named("javadocJar"))
+
+            pom {
+                name.set("Konig Validation Protobuf")
+                description.set("Core Kotlin validation framework")
+            }
+        }
+    }
 }
