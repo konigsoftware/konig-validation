@@ -1,2 +1,3 @@
-# konig-validation
-Kotlin validation framework for JSON and Protobuf requests
+# konig-validators
+
+Kotlin validators framework for JSON and Protobuf requests

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+package com.konigsoftware.validation.examples;
+
+// TODO: Move these into the library
+extend google.protobuf.FieldOptions {
+  optional string InMemoryType = 1000; // name of kotlin type; only needed by the codegen stage
+  optional string ValidatorName = 1001;
+  repeated string ValidatorOption = 1002;
+}
+
+message Example {
+  string string_default = 1 [
+    (InMemoryType) = "String"
+  ];
+
+  string string_nonempty = 2 [
+    (ValidatorOption) = "disallow_empty",
+    (ValidatorOption) = "max_length:100"
+  ];
+
+  string string_maxlength = 3 [
+    (ValidatorOption) = "max_length:20"
+  ];
+
+  int32 int_default = 4 [
+    (InMemoryType) = "int32"
+  ];
+}
