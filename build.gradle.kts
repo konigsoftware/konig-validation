@@ -30,6 +30,7 @@ subprojects {
 
     dependencies {
         implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+        implementation("org.slf4j:slf4j-simple:2.0.9")
 
         testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.21")
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
